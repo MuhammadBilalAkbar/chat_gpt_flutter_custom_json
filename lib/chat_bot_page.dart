@@ -37,7 +37,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
           leading: const Padding(
             padding: EdgeInsets.only(left: 10),
             child: CircleAvatar(
-              backgroundImage: AssetImage('chatGptImage.PNG'),
+              backgroundImage: AssetImage('chatGptImage.png'),
             ),
           ),
         ),
@@ -146,7 +146,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(.12),
-                    offset: const Offset(.5, kDefault / 1.6),
+                    offset: const Offset(kDefault / 10, kDefault / 10),
                     blurRadius: kDefault * 2,
                   ),
                 ],
@@ -169,7 +169,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
             const Align(
               alignment: Alignment.centerLeft,
               child: CircleAvatar(
-                backgroundImage: AssetImage('chatGptImage.PNG'),
+                backgroundImage: AssetImage('chatGptImage.png'),
                 radius: 18,
               ),
             ),
@@ -190,7 +190,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(.12),
-                      offset: const Offset(kDefault / 1.2, kDefault / 2),
+                      offset: const Offset(kDefault / 10, kDefault / 10),
                       blurRadius: kDefault * 2,
                     ),
                   ],
