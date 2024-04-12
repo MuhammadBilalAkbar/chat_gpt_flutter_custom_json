@@ -46,7 +46,6 @@ class _ChatBotPageState extends State<ChatBotPage> {
       child: Column(
         children: [
           Flexible(
-            adf
             child: ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) => messages[index].isBot
