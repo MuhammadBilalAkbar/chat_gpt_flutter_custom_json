@@ -93,9 +93,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                               )
                             : GestureDetector(
                                 onTap: () {
-                                  if (formKey.currentState!.validate()) {
-                                    sendMessage();
-                                  }
+                                  sendMessage();
                                 },
                                 child: const Icon(Icons.send,
                                     size: kDefault * 1.6, color: Colors.teal),
@@ -203,49 +201,48 @@ class _ChatBotPageState extends State<ChatBotPage> {
       );
 
   void sendMessage() async {
-    messages.add(
-      MessageModel(false, messageController.text),
-    );
-    setState(() => isAiTyping = true);
-    final response = await http.post(
-      Uri.parse('https://api.openai.com/v1/chat/completions'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey'
-      },
-      body: jsonEncode(
-        {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-            {
-              "role": "user",
-              "content": messageController.text,
-            },
-          ],
+    if (formKey.currentState!.validate()) {
+      messages.add(
+        MessageModel(false, messageController.text),
+      );
+      setState(() => isAiTyping = true);
+
+      final response = await http.post(
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiKey'
         },
-      ),
-    );
-    messageController.clear();
-    debugPrint('response :$response');
-    debugPrint('response.body :${response.body}');
-    debugPrint('response.statusCode :${response.statusCode}');
-    if (response.statusCode == 200) {
-      setState(() {
-        final responseModel = ResponseModel.fromJson(
-          jsonDecode(response.body),
-        );
-        messages.add(
-          MessageModel(
-            true,
-            responseModel.choices[0].message!.content.toString(),
-          ),
-        );
-        isAiTyping = false;
-        // for (MessageModel element in messages) {
-        //   debugPrint(element.toString());
-        //   debugPrint('element.message => ${element.message}');
-        // }
-      });
+        body: jsonEncode(
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [
+              {
+                "role": "user",
+                "content": messageController.text,
+              },
+            ],
+          },
+        ),
+      );
+      messageController.clear();
+      debugPrint('response :$response');
+      debugPrint('response.body :${response.body}');
+      debugPrint('response.statusCode :${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          final responseModel = ResponseModel.fromJson(
+            jsonDecode(response.body),
+          );
+          messages.add(
+            MessageModel(
+              true,
+              responseModel.choices[0].message!.content.toString(),
+            ),
+          );
+          isAiTyping = false;
+        });
+      }
     }
   }
 }
