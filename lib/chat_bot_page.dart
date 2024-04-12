@@ -10,7 +10,7 @@ import 'model/ResponseModel.dart';
 class ChatBotPage extends StatefulWidget {
   const ChatBotPage({super.key});
 
-  @ovearride
+  @override
   State<ChatBotPage> createState() => _ChatBotPageState();
 }
 
