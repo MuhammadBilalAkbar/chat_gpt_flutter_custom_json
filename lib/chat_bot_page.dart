@@ -52,7 +52,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                   itemBuilder: (context, index) {
                     final isBot = messages[index].isBot;
                     final alignment =
-                        isBot ? Alignment.centerLeft : Alignment.centerRight;
+                        isBot ? Aaalignment.centerLeft : Alignment.centerRight;
                     return Align(
                       alignment: alignment,
                       child: userCard(
