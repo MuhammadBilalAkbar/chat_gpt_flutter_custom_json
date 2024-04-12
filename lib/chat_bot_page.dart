@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -33,124 +32,88 @@ class _ChatBotPageState extends State<ChatBotPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('ChatGPT in Flutter'),
-          leading: const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: CircleAvatar(
-              backgroundImage: AssetImage('chatGptImage.png'),
+    appBar: AppBar(
+      title: const Text('ChatGPT in Flutter'),
+      leading: const Padding(
+        padding: EdgeInsets.only(left: 10),
+        child: CircleAvatar(
+          backgroundImage: AssetImage('chatGptImage.png'),
+        ),
+      ),
+    ),
+    body: Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Flexible(
+            child: ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) => messages[index].isBot
+                  ? botCard(index: index)
+                  : userCard(index: index),
             ),
           ),
-        ),
-        body: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              Flexible(
-                child: ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final isBot = messages[index].isBot;
-                    final alignment =
-                        isBot ? Aaalignment.centerLeft : Alignment.centerRight;
-                    return Align(
-                      alignment: alignment,
-                      child: userCard(
-                        index: index,
-                        alignment: alignment,
-                        isBot: isBot,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.symmetric(
+                horizontal: kDefault,
+                vertical: kDefault / 1.5,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(kDefault),
+                  topLeft: Radius.circular(kDefault),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.23),
+                    offset: const Offset(kDefault / 1.2, .5),
+                    blurRadius: kDefault,
+                  ),
+                ],
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(.12),
+                  borderRadius: BorderRadius.circular(kDefault),
+                ),
+                child: TextFormField(
+                  controller: messageController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    suffixIcon: isAiTyping
+                        ? Transform.scale(
+                      scale: 0.4,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 7,
                       ),
-                    );
-                  },
+                    )
+                        : GestureDetector(
+                      onTap: () {
+                        sendMessage();
+                      },
+                      child: const Icon(Icons.send,
+                          size: kDefault * 1.6, color: Colors.teal),
+                    ),
+                    hintText: 'Enter question here',
+                    border: InputBorder.none,
+                  ),
+                  textInputAction: TextInputAction.send,
+                  validator: (value) =>
+                  value!.isEmpty ? 'Enter some question' : null,
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.maxFinite,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefault / 2,
-                    vertical: kDefault / 1.5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(kDefault),
-                      topLeft: Radius.circular(kDefault),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.23),
-                        offset: const Offset(kDefault / 1.2, .5),
-                        blurRadius: kDefault,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(.12),
-                            borderRadius: BorderRadius.circular(kDefault * 3.33),
-                          ),
-                          child: TextFormField(
-                            controller: messageController,
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                              hintText: 'Enter question here',
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(kDefault)
-                            ),
-                            textInputAction: TextInputAction.send,
-                            validator: (value) =>
-                                value!.isEmpty ? 'Enter some question' : null,
-                          ),
-                        ),
-                      ),
-// suffixIcon:
-                      isAiTyping
-                          ? Transform.scale(
-                              scale: 0.8,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 5,
-                                color: Color(0xff0360a6),
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                sendMessage();
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.all(kDefault / 2),
-                                width: kDefault * 3,
-                                height: kDefault * 3,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xff0360a6),
-                                  borderRadius:
-                                      BorderRadius.circular(kDefault * 3.33),
-                                ),
-                                child: const Icon(
-                                  Icons.send,
-                                  size: kDefault * 1.6,
-                                  color: Color(0xffffffff),
-                                ),
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
+            ),
+          )
+        ],
+      ),
+    ),
+  );
 
-  Padding userCard({
-    required int index,
-    required Alignment alignment,
-    required bool isBot,
-  }) {
+  Padding userCard({required int index}) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: kDefault,
@@ -158,75 +121,84 @@ class _ChatBotPageState extends State<ChatBotPage> {
       ),
       child: Stack(
         children: [
-          Align(
-            alignment: alignment,
-            child: isBot
-                ? const CircleAvatar(
-                    backgroundImage: AssetImage('chatGptImage.png'),
-                    radius: 18,
-                  )
-                : const CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
+          const Align(
+            alignment: Alignment.centerRight,
+            child: CircleAvatar(
+              child: Icon(Icons.person),
+            ),
           ),
           Align(
-            alignment: alignment,
+            alignment: Alignment.centerRight,
             child: Container(
-              // height: ,
-              margin: isBot
-                  ? const EdgeInsets.only(
-                      right: kDefault / 2,
-                      left: kDefault * 3.6,
-                    )
-                  : const EdgeInsets.only(
-                      left: kDefault / 2,
-                      right: kDefault * 3.6,
-                    ),
-              padding: isBot
-                  ? const EdgeInsets.symmetric(
-                      horizontal: kDefault * 1.2,
-                      vertical: kDefault / 1.2,
-                    )
-                  : const EdgeInsets.symmetric(
-                      horizontal: kDefault * 1.2,
-                      vertical: kDefault / 1.2,
-                    ),
+              margin: const EdgeInsets.only(
+                  left: kDefault / 2, right: kDefault * 3.6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: kDefault / 1.1,
+                vertical: kDefault / 1.2,
+              ),
               decoration: BoxDecoration(
-                color:
-                    isBot ? const Color(0xffffffff) : const Color(0xff0360a6),
-                borderRadius: isBot
-                    ? const BorderRadius.only(
-                        bottomLeft: Radius.circular(kDefault * 3.33),
-                        bottomRight: Radius.circular(kDefault * 3.33),
-                        topRight: Radius.circular(kDefault * 3.33),
-                      )
-                    : const BorderRadius.only(
-                        bottomRight: Radius.circular(kDefault * 3.33),
-                        bottomLeft: Radius.circular(kDefault * 3.33),
-                        topLeft: Radius.circular(kDefault * 3.33),
-                      ),
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(kDefault * 1.8),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    offset: const Offset(kDefault / 5, kDefault / 5),
-                    blurRadius: kDefault * 0.5,
+                    color: Colors.grey.withOpacity(.12),
+                    offset: const Offset(kDefault / 10, kDefault / 10),
+                    blurRadius: kDefault * 2,
                   ),
                 ],
               ),
-              child: Text(
-                messages[index].message.trim(),
-                style: TextStyle(
-                  color:
-                      isBot ? const Color(0xff0360a6) : const Color(0xffffffff),
-                  fontSize: 16,
-                ),
-              ),
+              child: Text(messages[index].message.trim()),
             ),
           ),
         ],
       ),
     );
   }
+
+  Padding botCard({required int index}) => Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: kDefault,
+      vertical: kDefault,
+    ),
+    child: Stack(
+      children: [
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: CircleAvatar(
+            backgroundImage: AssetImage('chatGptImage.png'),
+            radius: 18,
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.only(
+                right: kDefault / 2, left: kDefault * 3.6),
+            padding: const EdgeInsets.symmetric(
+              horizontal: kDefault / 1.1,
+              vertical: kDefault / 1.2,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(kDefault * 1.8),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(.12),
+                  offset: const Offset(kDefault / 10, kDefault / 10),
+                  blurRadius: kDefault * 2,
+                ),
+              ],
+            ),
+            child: Text(messages[index].message.trim()),
+          ),
+        ),
+      ],
+    ),
+  );
 
   void sendMessage() async {
     if (formKey.currentState!.validate()) {
