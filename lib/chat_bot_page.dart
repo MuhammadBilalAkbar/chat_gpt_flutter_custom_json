@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chat_gpt_flutter_custom_json/widgets/cards.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -19,7 +20,6 @@ class _ChatBotPageState extends State<ChatBotPage> {
   final messageController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  // static const apiKey = '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';
   static const apiKey = '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';
   final messages = [MessageModel(true, 'Hi')];
   bool isAiTyping = false;
@@ -32,173 +32,92 @@ class _ChatBotPageState extends State<ChatBotPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('ChatGPT in Flutter'),
-      leading: const Padding(
-        padding: EdgeInsets.only(left: 10),
-        child: CircleAvatar(
-          backgroundImage: AssetImage('chatGptImage.png'),
-        ),
-      ),
-    ),
-    body: Form(
-      key: formKey,
-      child: Column(
-        children: [
-          Flexible(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) => messages[index].isBot
-                  ? botCard(index: index)
-                  : userCard(index: index),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              width: double.maxFinite,
-              padding: const EdgeInsets.symmetric(
-                horizontal: kDefault,
-                vertical: kDefault / 1.5,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(kDefault),
-                  topLeft: Radius.circular(kDefault),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.23),
-                    offset: const Offset(kDefault / 1.2, .5),
-                    blurRadius: kDefault,
-                  ),
-                ],
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(.12),
-                  borderRadius: BorderRadius.circular(kDefault),
-                ),
-                child: TextFormField(
-                  controller: messageController,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    suffixIcon: isAiTyping
-                        ? Transform.scale(
-                      scale: 0.4,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 7,
-                      ),
-                    )
-                        : GestureDetector(
-                      onTap: () {
-                        sendMessage();
-                      },
-                      child: const Icon(Icons.send,
-                          size: kDefault * 1.6, color: Colors.teal),
-                    ),
-                    hintText: 'Enter question here',
-                    border: InputBorder.none,
-                  ),
-                  textInputAction: TextInputAction.send,
-                  validator: (value) =>
-                  value!.isEmpty ? 'Enter some question' : null,
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    ),
-  );
-
-  Padding userCard({required int index}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kDefault,
-        vertical: kDefault,
-      ),
-      child: Stack(
-        children: [
-          const Align(
-            alignment: Alignment.centerRight,
+        appBar: AppBar(
+          title: const Text('ChatGPT in Flutter'),
+          leading: const Padding(
+            padding: EdgeInsets.only(left: 10),
             child: CircleAvatar(
-              child: Icon(Icons.person),
+              backgroundImage: AssetImage('chatGpt.png'),
             ),
           ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              margin: const EdgeInsets.only(
-                  left: kDefault / 2, right: kDefault * 3.6),
-              padding: const EdgeInsets.symmetric(
-                horizontal: kDefault / 1.1,
-                vertical: kDefault / 1.2,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(kDefault * 1.8),
+        ),
+        body: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              Flexible(
+                child: ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => messages[index].isBot
+                      ? botCard(
+                          index: index,
+                          message: messages[index].message.trim(),
+                        )
+                      : userCard(
+                          index: index,
+                          message: messages[index].message.trim(),
+                        ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(.12),
-                    offset: const Offset(kDefault / 10, kDefault / 10),
-                    blurRadius: kDefault * 2,
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefault,
+                    vertical: kDefault / 1.5,
                   ),
-                ],
-              ),
-              child: Text(messages[index].message.trim()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Padding botCard({required int index}) => Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: kDefault,
-      vertical: kDefault,
-    ),
-    child: Stack(
-      children: [
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: CircleAvatar(
-            backgroundImage: AssetImage('chatGptImage.png'),
-            radius: 18,
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            margin: const EdgeInsets.only(
-                right: kDefault / 2, left: kDefault * 3.6),
-            padding: const EdgeInsets.symmetric(
-              horizontal: kDefault / 1.1,
-              vertical: kDefault / 1.2,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(kDefault * 1.8),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(.12),
-                  offset: const Offset(kDefault / 10, kDefault / 10),
-                  blurRadius: kDefault * 2,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(kDefault),
+                      topLeft: Radius.circular(kDefault),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.23),
+                        offset: const Offset(kDefault / 1.2, .5),
+                        blurRadius: kDefault,
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.12),
+                      borderRadius: BorderRadius.circular(kDefault),
+                    ),
+                    child: TextFormField(
+                      controller: messageController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        suffixIcon: isAiTyping
+                            ? Transform.scale(
+                                scale: 0.4,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 7,
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  sendMessage();
+                                },
+                                child: const Icon(Icons.send,
+                                    size: kDefault * 1.6, color: Colors.teal),
+                              ),
+                        hintText: 'Enter question here',
+                        border: InputBorder.none,
+                      ),
+                      textInputAction: TextInputAction.send,
+                      validator: (value) =>
+                          value!.isEmpty ? 'Enter some question' : null,
+                    ),
+                  ),
                 ),
-              ],
-            ),
-            child: Text(messages[index].message.trim()),
+              )
+            ],
           ),
         ),
-      ],
-    ),
-  );
+      );
 
   void sendMessage() async {
     if (formKey.currentState!.validate()) {
