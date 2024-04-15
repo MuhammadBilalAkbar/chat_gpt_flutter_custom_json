@@ -37,7 +37,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
           leading: const Padding(
             padding: EdgeInsets.only(left: 10),
             child: CircleAvatar(
-              backgroundImage: AssetImage('chatGpt.png'),
+              backgroundImage: AssetImage('assets/chatGpt.png'),
             ),
           ),
         ),

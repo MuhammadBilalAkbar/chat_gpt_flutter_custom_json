@@ -62,7 +62,7 @@ Padding botCard({
           const Align(
             alignment: Alignment.centerLeft,
             child: CircleAvatar(
-              backgroundImage: AssetImage('chatGpt.png'),
+              backgroundImage: AssetImage('assets/chatGpt.png'),
               radius: 18,
             ),
           ),
