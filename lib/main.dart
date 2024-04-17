@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+    debugShowCheckedModeBanner: false,
         title: 'ChatGPT SDK Flutter',
-        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.teal,
           appBarTheme: AppBarTheme(
