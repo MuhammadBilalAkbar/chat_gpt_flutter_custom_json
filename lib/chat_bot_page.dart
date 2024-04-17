@@ -136,7 +136,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
             "messages": [
               {
                 "role": "user",
-                "content": 'hello',
+                "content": messageController.text,
               },
             ],
           },
