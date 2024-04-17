@@ -20,7 +20,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
   final messageController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  static const apiKey = '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';
+  static const apiKey = 'sk-proj-TW32qOV2Kt0IBrtiSaeXT3BlbkFJ460gVmjSageeDZhjkN6s';
   final messages = [MessageModel(true, 'Hi')];
   bool isAiTyping = false;
 
@@ -98,9 +98,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                                 ),
                               )
                             : GestureDetector(
-                                onTap: () {
-                                  sendMessage();
-                                },
+                                onTap: sendMessage,
                                 child: const Icon(Icons.send,
                                     size: kDefault * 1.6, color: Colors.teal),
                               ),
@@ -138,7 +136,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
             "messages": [
               {
                 "role": "user",
-                "content": messageController.text,
+                "content": 'hello',
               },
             ],
           },
