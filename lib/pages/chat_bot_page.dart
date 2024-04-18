@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 
-import 'model/MessageModel.dart';
-import 'model/ResponseModel.dart';
+import '../model/MessageModel.dart';
+import '../model/ResponseModel.dart';
 
 class ChatBotPage extends StatefulWidget {
   const ChatBotPage({super.key});

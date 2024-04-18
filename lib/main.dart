@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'chat_bot_page.dart';
+import '/theme.dart';
+import 'pages/chat_bot_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -9,16 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         title: 'ChatGPT SDK Flutter',
-        theme: ThemeData(
-          primaryColor: Colors.teal,
-          appBarTheme: AppBarTheme(
-            titleTextStyle:
-                const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            color: Colors.teal[300],
-          ),
-        ),
+        theme: theme,
         home: const ChatBotPage(),
       );
 }
